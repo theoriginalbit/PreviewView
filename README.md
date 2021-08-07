@@ -2,31 +2,7 @@
 
 Make use of SwiftUI previews for rapidly protyping your UIViewControllers and UIViews!
 
-### Previewing a UIViewController
-
-```swift
-struct YourViewController_Previews: PreviewProvider {
-    static var previews: some View {
-        Preview(for: YourViewController())
-            .edgesIgnoringSafeArea(.all)
-            .previewDevice(PreviewDevice(rawValue: "iPhone 11"))
-    }
-}
-```
-
-If your view controller is meant to be displayed in a `UINavigationController` there is a second parameter to adjust the navigation controller style; it can be either `.none` or `.wrap(prefersLargeTitles:)`
-
-```swift
-struct YourViewController_Previews: PreviewProvider {
-    static var previews: some View {
-        Preview(for: YourViewController(), navigationControllerStyle: .wrap(prefersLargeTitles: true))
-            .edgesIgnoringSafeArea(.all)
-            .previewDevice(PreviewDevice(rawValue: "iPhone 11"))
-    }
-}
-```
-
-### Previewing a UIView
+### Previewing a `UIView`
 
 ```swift
 struct YourViewController_Previews: PreviewProvider {
@@ -38,6 +14,50 @@ struct YourViewController_Previews: PreviewProvider {
 ```
 
 Update the `previewLayout` values to be the typical size of your view.
+
+### Previewing a `UIViewController`
+
+```swift
+struct YourViewController_Previews: PreviewProvider {
+    static var previews: some View {
+        Preview(for: YourViewController())
+    }
+}
+```
+
+### Previewing a `UIViewController` embedded in a `UINavigationController`
+
+#### With a standard navigation bar
+
+```swift
+struct YourViewController_Previews: PreviewProvider {
+    static var previews: some View {
+        Preview(navigationControllerFor: YourViewController())
+    }
+}
+```
+
+#### With a large title navigation bar
+
+```swift
+struct YourViewController_Previews: PreviewProvider {
+    static var previews: some View {
+        Preview(navigationControllerFor: YourViewController(), withNavigationBarStyle: .largeTitle)
+    }
+}
+```
+
+#### Without a navigation bar
+
+Helpful when you may be using Live Preview and any other view controllers that are pushed from your view controller require a navigation bar.
+
+```swift
+struct YourViewController_Previews: PreviewProvider {
+    static var previews: some View {
+        Preview(navigationControllerFor: YourViewController(), withNavigationBarStyle: .none)
+    }
+}
+```
 
 ### Pro Tip
 

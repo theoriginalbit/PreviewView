@@ -1,20 +1,20 @@
 import SwiftUI
 
 public struct Preview: View {
-    public enum NavigationController {
-        case none
-        case wrap(prefersLargeTitles: Bool = false)
-    }
-
     enum Content {
-        case asViewController(UIViewController, NavigationController)
+        case asViewController(UIViewController)
+        case asNavigationController(UIViewController, NavigationBarStyle)
         case asView(UIView)
     }
 
     private let content: Content
 
-    public init(for viewController: UIViewController, navigationControllerStyle: NavigationController = .none) {
-        content = .asViewController(viewController, navigationControllerStyle)
+    public init(for viewController: UIViewController) {
+        content = .asViewController(viewController)
+    }
+
+    public init(navigationControllerFor viewController: UIViewController, withNavigationBarStyle barStyle: NavigationBarStyle = .default) {
+        content = .asNavigationController(viewController, barStyle)
     }
 
     public init(for view: UIView) {
@@ -24,12 +24,11 @@ public struct Preview: View {
     @ViewBuilder
     public var body: some View {
         switch content {
-        case let .asViewController(viewController, .none):
+        case let .asViewController(viewController):
             _PreviewViewController(for: viewController)
                 .edgesIgnoringSafeArea(.all)
-        case let .asViewController(viewController, .wrap(prefersLargeTitles)):
-            _PreviewViewController(for: viewController)
-                .wrapInNavigationController(prefersLargeTitles: prefersLargeTitles)
+        case let .asNavigationController(viewController, barStyle):
+            _PreviewNavigationController(embedding: viewController, withBarStyle: barStyle)
                 .edgesIgnoringSafeArea(.all)
         case let .asView(view):
             _PreviewView(for: view)
@@ -37,23 +36,50 @@ public struct Preview: View {
     }
 }
 
+public extension Preview {
+    enum NavigationBarStyle {
+        case none
+        case `default`
+        case largeTitle
+
+        var prefersLargeTitles: Bool {
+            self == .largeTitle
+        }
+    }
+}
+
 // MARK: - As UIViewController
 
-private struct _PreviewViewController<ViewControllerType: UIViewController>: UIViewControllerRepresentable {
-    let viewController: ViewControllerType
+private struct _PreviewViewController: UIViewControllerRepresentable {
+    let viewController: UIViewController
 
-    init(for viewController: ViewControllerType) {
+    init(for viewController: UIViewController) {
         self.viewController = viewController
     }
 
-    func makeUIViewController(context: Context) -> ViewControllerType { viewController }
-    func updateUIViewController(_ viewController: ViewControllerType, context: Context) {}
+    func makeUIViewController(context: Context) -> UIViewController { viewController }
+    func updateUIViewController(_ viewController: UIViewController, context: Context) {}
+}
 
-    func wrapInNavigationController(prefersLargeTitles: Bool = false) -> _PreviewViewController<UINavigationController> {
-        let controller = UINavigationController(rootViewController: viewController)
-        controller.navigationBar.prefersLargeTitles = prefersLargeTitles
-        return _PreviewViewController<UINavigationController>(for: controller)
+// MARK: - As UINavigationController
+
+private struct _PreviewNavigationController: UIViewControllerRepresentable {
+    let navigationController: UINavigationController
+
+    init(embedding viewController: UIViewController, withBarStyle barStyle: Preview.NavigationBarStyle) {
+        let navigationController = UINavigationController(rootViewController: viewController)
+        switch barStyle {
+        case .default: break
+        case .none:
+            navigationController.setNavigationBarHidden(true, animated: false)
+        case .largeTitle:
+            navigationController.navigationBar.prefersLargeTitles = true
+        }
+        self.navigationController = navigationController
     }
+
+    func makeUIViewController(context: Context) -> UINavigationController { navigationController }
+    func updateUIViewController(_ viewController: UINavigationController, context: Context) {}
 }
 
 // MARK: - As UIView
