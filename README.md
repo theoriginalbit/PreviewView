@@ -59,6 +59,52 @@ struct YourViewController_Previews: PreviewProvider {
 }
 ```
 
+### Previewing a `UIViewController` embedded in a `UITabBarController`
+
+```swift
+struct YourViewController_Previews: PreviewProvider {
+    static var previews: some View {
+        Preview(tabBarControllerFor: YourViewController())
+    }
+}
+```
+
+You can also have the preview show the tab bar with other tab items <sup>1</sup>. By default your supplied view controller will be shown in the first position of the tab bar.
+
+```swift
+struct YourViewController_Previews: PreviewProvider {
+    static let secondTabBarItem = UITabBarItem(title: "First",
+                                               image: UIImage(systemName: "capsule"),
+                                               selectedImage: UIImage(systemName: "capsule.fill"))
+
+    static let thirdTabBarItem = UITabBarItem(title: "Third",
+                                              image: UIImage(systemName: "diamond"),
+                                              selectedImage: UIImage(systemName: "diamond.fill"))
+
+    static var previews: some View {
+        Preview(tabBarControllerFor: YourViewController(), withOtherTabs: secondTabBarItem, thirdTabBarItem)
+    }
+}
+```
+
+You can have it shown at any other position by providing a position index parameter. The following code the view controller will be shown in the second position.
+
+```swift
+struct YourViewController_Previews: PreviewProvider {
+    static let firstTabBarItem = UITabBarItem(title: "First",
+                                              image: UIImage(systemName: "capsule"),
+                                              selectedImage: UIImage(systemName: "capsule.fill"))
+
+    static let thirdTabBarItem = UITabBarItem(title: "Third",
+                                              image: UIImage(systemName: "diamond"),
+                                              selectedImage: UIImage(systemName: "diamond.fill"))
+
+    static var previews: some View {
+        Preview(tabBarControllerFor: YourViewController(), atPosition: 1, withOtherTabs: firstTabBarItem, thirdTabBarItem)
+    }
+}
+```
+
 ### Pro Tip
 
 Did you know that you can easily create multiple previews with a simple `ForEach` loop?

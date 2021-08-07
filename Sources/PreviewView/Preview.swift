@@ -4,6 +4,7 @@ public struct Preview: View {
     enum Content {
         case asViewController(UIViewController)
         case asNavigationController(UIViewController, NavigationBarStyle)
+        case asTabBarController(UIViewController, Int, [UITabBarItem])
         case asView(UIView)
     }
 
@@ -15,6 +16,10 @@ public struct Preview: View {
 
     public init(navigationControllerFor viewController: UIViewController, withNavigationBarStyle barStyle: NavigationBarStyle = .default) {
         content = .asNavigationController(viewController, barStyle)
+    }
+
+    public init(tabBarControllerFor viewController: UIViewController, atPosition position: Int = 0, withOtherTabs otherTabs: UITabBarItem...) {
+        content = .asTabBarController(viewController, position, otherTabs)
     }
 
     public init(for view: UIView) {
@@ -29,6 +34,9 @@ public struct Preview: View {
                 .edgesIgnoringSafeArea(.all)
         case let .asNavigationController(viewController, barStyle):
             _PreviewNavigationController(embedding: viewController, withBarStyle: barStyle)
+                .edgesIgnoringSafeArea(.all)
+        case let .asTabBarController(viewController, position, otherTabs):
+            _PreviewTabBarController(embedding: viewController, atPosition: position, withOtherTabs: otherTabs)
                 .edgesIgnoringSafeArea(.all)
         case let .asView(view):
             _PreviewView(for: view)
@@ -80,6 +88,29 @@ private struct _PreviewNavigationController: UIViewControllerRepresentable {
 
     func makeUIViewController(context: Context) -> UINavigationController { navigationController }
     func updateUIViewController(_ viewController: UINavigationController, context: Context) {}
+}
+
+// MARK: - As UITabBarController
+
+private struct _PreviewTabBarController: UIViewControllerRepresentable {
+    let tabBarController: UITabBarController
+
+    init(embedding viewController: UIViewController, atPosition position: Int, withOtherTabs otherTabs: [UITabBarItem]) {
+        var viewControllers: [UIViewController] = otherTabs.map {
+            let viewController = UIViewController()
+            viewController.tabBarItem = $0
+            return viewController
+        }
+        viewControllers.insert(viewController, at: position)
+
+        let tabBarController = UITabBarController()
+        tabBarController.viewControllers = viewControllers
+        tabBarController.selectedIndex = position
+        self.tabBarController = tabBarController
+    }
+
+    func makeUIViewController(context: Context) -> UITabBarController { tabBarController }
+    func updateUIViewController(_ viewController: UITabBarController, context: Context) {}
 }
 
 // MARK: - As UIView
