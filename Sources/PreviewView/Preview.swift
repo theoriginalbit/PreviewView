@@ -6,25 +6,40 @@ public struct Preview: View {
         case wrap(prefersLargeTitles: Bool = false)
     }
 
-    public let body: AnyView
+    enum Content {
+        case asViewController(UIViewController, NavigationController)
+        case asView(UIView)
+    }
+
+    private let content: Content
 
     public init(for viewController: UIViewController, navigationControllerStyle: NavigationController = .none) {
-        let preview = PreviewController(for: viewController)
-
-        switch navigationControllerStyle {
-        case .none:
-            body = AnyView(erasing: preview)
-        case let .wrap(prefersLargeTitles):
-            body = AnyView(erasing: preview.wrapInNavigationController(prefersLargeTitles: prefersLargeTitles))
-        }
+        content = .asViewController(viewController, navigationControllerStyle)
     }
 
     public init(for view: UIView) {
-        body = AnyView(erasing: PreviewView(for: view))
+        content = .asView(view)
+    }
+
+    @ViewBuilder
+    public var body: some View {
+        switch content {
+        case let .asViewController(viewController, .none):
+            _PreviewViewController(for: viewController)
+                .edgesIgnoringSafeArea(.all)
+        case let .asViewController(viewController, .wrap(prefersLargeTitles)):
+            _PreviewViewController(for: viewController)
+                .wrapInNavigationController(prefersLargeTitles: prefersLargeTitles)
+                .edgesIgnoringSafeArea(.all)
+        case let .asView(view):
+            _PreviewView(for: view)
+        }
     }
 }
 
-private struct PreviewController<ViewControllerType: UIViewController>: UIViewControllerRepresentable {
+// MARK: - As UIViewController
+
+private struct _PreviewViewController<ViewControllerType: UIViewController>: UIViewControllerRepresentable {
     let viewController: ViewControllerType
 
     init(for viewController: ViewControllerType) {
@@ -34,14 +49,16 @@ private struct PreviewController<ViewControllerType: UIViewController>: UIViewCo
     func makeUIViewController(context: Context) -> ViewControllerType { viewController }
     func updateUIViewController(_ viewController: ViewControllerType, context: Context) {}
 
-    func wrapInNavigationController(prefersLargeTitles: Bool = false) -> PreviewController<UINavigationController> {
+    func wrapInNavigationController(prefersLargeTitles: Bool = false) -> _PreviewViewController<UINavigationController> {
         let controller = UINavigationController(rootViewController: viewController)
         controller.navigationBar.prefersLargeTitles = prefersLargeTitles
-        return PreviewController<UINavigationController>(for: controller)
+        return _PreviewViewController<UINavigationController>(for: controller)
     }
 }
 
-private struct PreviewView<ViewType: UIView>: UIViewRepresentable {
+// MARK: - As UIView
+
+private struct _PreviewView<ViewType: UIView>: UIViewRepresentable {
     typealias UIViewType = ViewType
 
     let view: ViewType
