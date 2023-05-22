@@ -1,12 +1,25 @@
 # PreviewView
 
-Make use of SwiftUI previews for rapidly protyping your `UIViewControllers` and `UIViews`!
+Make use of SwiftUI previews for rapidly prototyping your `UIViewControllers` and `UIViews`!
 
-## Important Note
+The SwiftUI preview canvas is tied to a specific version of Xcode, not the the target OS version. This means you can make use of this utility even if you're not targeting iOS 13 or higher, as long as you're using Xcode 10 or higher.
 
-The SwiftUI preview canvas is tied to a specific version of Xcode, not the the target OS version. This means you can make use of this utility even if you're not targetting iOS 13 or higher, as long as you're using Xcode 10 or higher.
+## My iOS deployment target is below iOS 13
 
-If your application targets earlier than iOS 13 you will need to do is mark your `PreviewProvider` structs with an `@available(iOS 13, *)` attribute to ensure the app can still compile.
+If you're targeting an iOS version earlier than iOS 13 then you may be get an error such as: 
+```
+Compiling failed: '__designTimeString(_:fallback:)' is only available in iOS 13.0 or newer
+```
+Other known variants may be:
+- `__designTimeInteger(_:fallback:)`
+- `__designTimeBoolean(_:fallback:)`
+- `__designTimeFloat(_:fallback:)`
+
+To solve this issue this library provides another target, `PreviewViewLegacyOSCompileFix`, which adds functions annotated with `@backDeployed(before:)` so these functions exist on versions earlier than iOS 13.
+
+In addition the normal `import PreviewView` and `import SwiftUI` imports alongside your `PreviewProvider` you will need to add `import PreviewViewLegacyOSCompileFix` to ensure the back deployed functions are present.
+
+Don't forget to mark your `PreviewProvider` with `@available(iOS 13, *)`.
 
 ## Installation
 
@@ -111,7 +124,7 @@ Displaying a single tab would be weird, so to allow your previews to closely mat
 struct YourViewController_Previews: PreviewProvider {
     static var previews: some View {
         TabBarControllerPreview {
-            PreviewBlankTabItem(title: "First", symbolNamed: "capsule")
+            PreviewBlankTabItem(title: "First", image: UIImage(systemName: "capsule"))
             
             ViewControllerPreview(YourViewController())
             
@@ -128,33 +141,15 @@ You can even embed your view controllers in a navigation controller to get the f
 struct YourViewController_Previews: PreviewProvider {
     static var previews: some View {
         TabBarControllerPreview {
-            PreviewBlankTabItem(title: "First", symbolNamed: "capsule")
+            PreviewBlankTabItem(title: "First", image: UIImage(systemName: "capsule"))
             
             NavigationControllerPreview {
                 YourViewController()
             }
             
-            PreviewBlankTabItem(title: "Third", symbolNamed: "diamond")
+            PreviewBlankTabItem(title: "Third", image: UIImage(systemName: "diamond"))
         }
         .edgesIgnoringSafeArea(.all)
-    }
-}
-```
-
-## Pro Tip
-
-Did you know that you can easily create multiple previews with a simple `ForEach` loop?
-
-```swift
-struct YourViewController_Previews: PreviewProvider {
-    static let supportedDevices = ["iPhone 11", "iPhone 8", "iPhone SE (1st generation)"]
-    
-    static var previews: some View {
-        ForEach(Self.supportedDevices, id: \.self) { deviceName in
-            ViewControllerPreview(YourViewController())
-                .previewDevice(PreviewDevice(rawValue: deviceName))
-                .previewDisplayName(deviceName)
-        }
     }
 }
 ```

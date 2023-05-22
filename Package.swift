@@ -9,8 +9,10 @@ let package = Package(
     ],
     products: [
         .library(name: "PreviewView", targets: ["PreviewView"]),
+        .library(name: "PreviewViewLegacyOSCompileFix", targets: ["PreviewViewLegacyOSCompileFix"]),
     ],
     targets: [
         .target(name: "PreviewView"),
+        .target(name: "PreviewViewLegacyOSCompileFix"),
     ]
 )
