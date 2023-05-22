@@ -8,13 +8,16 @@
 import UIKit
 
 /// Represents an item that can be used by the ``TabBarControllerPreview``.
+@available(iOS 13, *)
 public protocol PreviewTabBarItem {
     /// Provides an instance of a view controller for use in the `UITabBarController`.
     var viewController: UIViewController { get }
 }
 
+@available(iOS 13, *)
 extension ViewControllerPreview: PreviewTabBarItem {}
 
+@available(iOS 13, *)
 extension NavigationControllerPreview: PreviewTabBarItem {
     public var viewController: UIViewController { navigationController }
 }
@@ -29,6 +32,7 @@ extension NavigationControllerPreview: PreviewTabBarItem {
 /// }
 /// ```
 /// - Important: This tab item may not be visible when your canvas is in Live Preview mode.
+@available(iOS 13, *)
 public struct PreviewBlankTabItem: PreviewTabBarItem {
     /// The view controller that backs this placeholder in the tab bar controller preview.
     public let viewController: UIViewController

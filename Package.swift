@@ -5,7 +5,7 @@ import PackageDescription
 let package = Package(
     name: "PreviewView",
     platforms: [
-        .iOS(.v13),
+        .iOS(.v11),
     ],
     products: [
         .library(name: "PreviewView", targets: ["PreviewView"]),

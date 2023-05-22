@@ -10,7 +10,9 @@ import SwiftUI
 /// A custom parameter attribute that constructs a navigation stack from a closure.
 ///
 /// This is used by ``NavigationControllerPreview`` to provide a navigation stack. The last element in the navigation stack will be shown in the preview.
-@resultBuilder public enum PreviewNavigationStackBuilder {
+@available(iOS 13, *)
+@resultBuilder
+public enum PreviewNavigationStackBuilder {
     public static func buildBlock(_ viewControllers: UIViewController...) -> [UIViewController] { viewControllers }
 }
 
@@ -20,6 +22,7 @@ import SwiftUI
 ///
 /// - SeeAlso: ``ViewControllerPreview``
 /// - SeeAlso: ``TabBarControllerPreview``
+@available(iOS 13, *)
 public struct NavigationControllerPreview: UIViewControllerRepresentable {
     /// A style for displaying the navigation bar of this navigation controller.
     public enum NavigationBarStyle {

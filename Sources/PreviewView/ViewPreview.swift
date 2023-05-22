@@ -20,6 +20,7 @@ import SwiftUI
 ///
 /// - Important: For the best possible previewing of a standalone view, you should set the `.previewLayout` values to be the expected in-app sizes of your view.
 /// - SeeAlso: ``ViewControllerPreview``
+@available(iOS 13, *)
 public struct ViewPreview: UIViewRepresentable {
     /// The view being previewed.
     public let view: UIView

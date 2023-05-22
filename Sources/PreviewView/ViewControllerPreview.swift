@@ -19,6 +19,7 @@ import SwiftUI
 ///
 /// - SeeAlso: ``NavigationControllerPreview``
 /// - SeeAlso: ``TabBarControllerPreview``
+@available(iOS 13, *)
 public struct ViewControllerPreview: UIViewControllerRepresentable {
     /// The view controller being previewed.
     public let viewController: UIViewController
