@@ -1,3 +1,9 @@
+> **Note**
+> 
+> The `#Preview` macro ([WWDC23 session](https://developer.apple.com/wwdc23/10252)) will supplant this library once you can set your Minimum Deployment to iOS 17 or higher.
+>
+> If you have a project on Xcode 14, or your Minimum Deployment target is set to as early as iOS 11, then this still may be the library you're looking for.
+
 # PreviewView
 
 Make use of SwiftUI previews for rapidly prototyping your `UIViewControllers` and `UIViews`!
