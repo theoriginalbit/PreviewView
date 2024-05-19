@@ -1,8 +1,20 @@
-> **Note**
+> [!TIP]
 > 
-> The `#Preview` macro ([WWDC23 session](https://developer.apple.com/wwdc23/10252)) will supplant this library once you can set your Minimum Deployment to iOS 17 or higher.
+> The `#Preview` macro ([WWDC23 session](https://developer.apple.com/wwdc23/10252)) has replaced this library if you are using Xcode 15 or higher.
 >
-> If you have a project on Xcode 14, or your Minimum Deployment target is set to as early as iOS 11, then this still may be the library you're looking for.
+> If your Minimum Deployment target is set earlier than iOS 17 you will need to add an availability check.
+>
+> ```swift
+> @available(iOS 17, *)
+> #Preview {
+>   YourViewController()
+> }
+>
+> @available(iOS 17, *)
+> #Preview {
+>   YourView()
+> }
+> ```
 
 # PreviewView
 
